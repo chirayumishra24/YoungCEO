@@ -4,8 +4,11 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { XPContext } from '../components/Layout'
 import { SKILLS } from '../constants'
 import Confetti from 'react-confetti'
+import JourneyTimeline from '../components/JourneyTimeline'
+import AchievementBadge from '../components/AchievementBadge'
+import CircuitDivider from '../components/CircuitDivider'
 
-const ActivityBackground3D = lazy(() => import('../components/ActivityBackground3D'))
+const Scene_TrophyRoom = lazy(() => import('../components/Scene_TrophyRoom'))
 
 const presentationItems = [
   { emoji: '🏷️', text: 'Introduce the brand and wearable device' },
@@ -38,7 +41,7 @@ export default function Final() {
   return (
     <div className="activity-centre">
       <Suspense fallback={null}>
-        <ActivityBackground3D />
+        <Scene_TrophyRoom />
       </Suspense>
 
       {/* Confetti Overlay */}
@@ -104,6 +107,22 @@ export default function Final() {
         </div>
       </section>
 
+      {/* Journey Timeline */}
+      <div className="activity-content" style={{ marginBottom: '1rem' }}>
+        <motion.section className="activity-card tilt-card"
+          initial={r ? undefined : { opacity: 0, y: 20 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.16 }} transition={r ? undefined : { duration: 0.5 }}>
+          <div className="text-center">
+            <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-primary/50">Your Journey</div>
+            <h2 className="mt-3 font-[Fredoka] text-3xl font-bold text-text-dark md:text-4xl">From Idea to Stage</h2>
+            <p className="mt-3 text-base font-medium text-text-mid max-w-2xl mx-auto">Every chapter brought you closer to the final pitch.</p>
+          </div>
+          <div className="mt-8">
+            <JourneyTimeline />
+          </div>
+        </motion.section>
+      </div>
+
       {/* Main Content */}
       <div className="activity-content">
         <div className="activity-grid">
@@ -164,14 +183,14 @@ export default function Final() {
                 </p>
               </div>
               
-              <div className="flex flex-wrap justify-center gap-3">
-                {SKILLS.map((skill) => (
-                   <span key={skill.name} className="activity-chip-info text-sm py-2 px-4 shadow-sm">
-                      {skill.emoji} {skill.name}
-                   </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                {SKILLS.map((skill, i) => (
+                  <AchievementBadge key={skill.name} emoji={skill.emoji} name={skill.name} unlocked={true} delay={i * 0.08} />
                 ))}
               </div>
             </motion.section>
+
+            <CircuitDivider />
 
              {/* Teacher Tips (formerly sidebar) */}
             <motion.section className="activity-card"

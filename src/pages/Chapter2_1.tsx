@@ -2,8 +2,9 @@ import { Suspense, lazy, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { XPContext } from '../components/Layout'
+import CircuitDivider from '../components/CircuitDivider'
 
-const ActivityBackground3D = lazy(() => import('../components/ActivityBackground3D'))
+const Scene_Stage = lazy(() => import('../components/Scene_Stage'))
 
 const pitchSteps = [
   { emoji: '⚙️', title: 'Features / Functions', prompt: 'What does your wearable do?', detail: 'Explain the main job of the invention and what problem it solves for the student.', example: 'Our SmartBand tracks location, counts steps, and sends an alert when the SOS button is pressed.' },
@@ -18,6 +19,12 @@ export default function Chapter2_1() {
   const r = useReducedMotion()
 
   useEffect(() => { addXP(15, 'ch2_1_visit') }, [addXP])
+
+  return (
+    <div className="activity-centre">
+      <Suspense fallback={null}>
+        <Scene_Stage />
+      </Suspense>
 
       {/* Hero Section */}
       <section className="activity-hero">
@@ -34,6 +41,11 @@ export default function Chapter2_1() {
             <p className="activity-hero-desc mt-6">
               Time to convince the investors why your smart wearable is the future! Keep it short, clear, and confident.
             </p>
+            <div className="flex flex-wrap gap-3 mt-6">
+              <span className="activity-chip-info">🎙️ Stage mode</span>
+              <span className="activity-chip-info">📝 5 pitch parts</span>
+              <span className="activity-chip-info">💡 Example lines</span>
+            </div>
             <div className="flex flex-col items-center gap-4 mt-8 sm:flex-row">
               <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="btn-primary text-lg px-10 py-4">Start Pitch Prep ↓</button>
             </div>
@@ -73,7 +85,7 @@ export default function Chapter2_1() {
               </div>
             </motion.section>
 
-            {/* Checklist Overview (Former Sidebar) */}
+            {/* Checklist Overview */}
             <motion.section className="activity-card"
               initial={r ? undefined : { opacity: 0, y: 20 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={r ? undefined : { duration: 0.5 }}>
@@ -97,7 +109,9 @@ export default function Chapter2_1() {
               </div>
             </motion.section>
 
-            {/* Pitch Flow List */}
+            <CircuitDivider />
+
+            {/* Teleprompter Pitch Flow */}
             <motion.section className="activity-card" id="pitch-recipe"
               initial={r ? undefined : { opacity: 0, y: 20 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={r ? undefined : { duration: 0.5 }}>
@@ -105,30 +119,30 @@ export default function Chapter2_1() {
                 <div className="text-[0.72rem] font-black uppercase tracking-[0.28em] text-primary/50">Pitch Flow</div>
                 <h2 className="mt-3 font-[Fredoka] text-3xl font-bold text-text-dark md:text-4xl">Speaking Order</h2>
                 <p className="mt-3 text-base font-medium text-text-mid max-w-2xl mx-auto">
-                  Use these five content cards as the framework. Each gives students one job, one explanation, and one example line.
+                  Each card is one cue — read it, practice it, own it.
                 </p>
               </div>
 
-              <div className="mt-8 flex flex-col gap-6">
+              <div className="mt-8 flex flex-col gap-5 w-full">
                 {pitchSteps.map((step, i) => (
                   <motion.div key={step.title}
-                    initial={r ? undefined : { opacity: 0, y: 16 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
+                    initial={r ? undefined : { opacity: 0, x: -20 }} whileInView={r ? undefined : { opacity: 1, x: 0 }}
                     viewport={{ once: true }} transition={r ? undefined : { duration: 0.4, delay: i * 0.1 }}
-                    className="flex flex-col sm:flex-row gap-5 rounded-[22px] border border-primary/10 bg-white/80 p-5 shadow-sm sm:items-start text-left">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-muted text-2xl shadow-inner border border-white">
-                      {step.emoji}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                        <h3 className="font-[Fredoka] text-xl font-bold text-text-dark">{i + 1}. {step.title}</h3>
-                        <span className="inline-flex w-fit rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                          {step.prompt}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-sm font-medium leading-relaxed text-text-mid">{step.detail}</p>
-                      <div className="mt-4 rounded-[16px] bg-secondary/[0.04] px-4 py-3 border border-secondary/10">
-                        <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-secondary/60">Example Line</div>
-                        <p className="mt-1 text-sm italic font-medium leading-relaxed text-text-dark/80">"{step.example}"</p>
+                    className="teleprompter-card">
+                    <div className="flex gap-5 items-start">
+                      <div className="teleprompter-num">{i + 1}</div>
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                          <h3 className="font-[Fredoka] text-xl font-bold text-text-dark">{step.emoji} {step.title}</h3>
+                          <span className="inline-flex w-fit rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                            {step.prompt}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm font-medium leading-relaxed text-text-mid">{step.detail}</p>
+                        <div className="mt-4 rounded-[16px] bg-secondary/[0.04] px-4 py-3 border border-secondary/10">
+                          <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-secondary/60">Example Line</div>
+                          <p className="mt-1 text-sm italic font-medium leading-relaxed text-text-dark/80">"{step.example}"</p>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -136,8 +150,10 @@ export default function Chapter2_1() {
               </div>
             </motion.section>
 
+            <CircuitDivider />
+
             {/* Presentation Rules */}
-             <motion.section className="activity-card"
+             <motion.section className="activity-card tilt-card"
               initial={r ? undefined : { opacity: 0, y: 20 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={r ? undefined : { duration: 0.5 }}>
               <div className="text-center">

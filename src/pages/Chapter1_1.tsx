@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import { XPContext } from '../components/Layout'
 import { DEVICES, IDEA_EXAMPLES } from '../constants'
+import PhaseTracker from '../components/PhaseTracker'
+import CircuitDivider from '../components/CircuitDivider'
 
-const ActivityBackground3D = lazy(() => import('../components/ActivityBackground3D'))
+const Scene_InventorLab = lazy(() => import('../components/Scene_InventorLab'))
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -156,9 +158,9 @@ export default function Chapter1_1() {
 
   return (
     <div className="activity-centre">
-      {/* Immersive 3D Background */}
+      {/* Immersive 3D Background — Inventor's Lab */}
       <Suspense fallback={null}>
-        <ActivityBackground3D />
+        <Scene_InventorLab />
       </Suspense>
 
       {/* Hero Section */}
@@ -219,6 +221,19 @@ export default function Chapter1_1() {
           </motion.div>
         </div>
       </section>
+
+      {/* Phase Tracker */}
+      <div className="activity-content" style={{ marginBottom: '1rem' }}>
+        <PhaseTracker
+          activeIndex={progressChecks.findIndex(c => !c)}
+          steps={[
+            { label: 'Problem', emoji: '🎯', done: progressChecks[0] },
+            { label: 'Gadget', emoji: '⌚', done: progressChecks[1] },
+            { label: 'Powers', emoji: '⚡', done: progressChecks[2] },
+            { label: 'Founder', emoji: '📋', done: progressChecks[3] },
+          ]}
+        />
+      </div>
 
       {/* Main Content */}
       <div className="activity-content">
@@ -281,8 +296,10 @@ export default function Chapter1_1() {
               </div>
             </motion.section>
 
+            <CircuitDivider />
+
             {/* Step 2 — Device */}
-            <motion.section className="activity-card" id="step-device"
+            <motion.section className="activity-card tilt-card" id="step-device"
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={{ duration: 0.5, ease }}>
               <div className="text-center">
@@ -325,8 +342,10 @@ export default function Chapter1_1() {
               </div>
             </motion.section>
 
+            <CircuitDivider />
+
             {/* Step 3 — Powers */}
-            <motion.section className="activity-card" id="step-powers"
+            <motion.section className="activity-card tilt-card" id="step-powers"
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={{ duration: 0.5, ease }}>
               <div className="text-center">
@@ -350,8 +369,10 @@ export default function Chapter1_1() {
               </div>
             </motion.section>
 
+            <CircuitDivider />
+
             {/* Step 4 — Founder Card */}
-            <motion.section className="activity-card" id="step-console"
+            <motion.section className="activity-card tilt-card" id="step-console"
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={{ duration: 0.5, ease }}>
               <div className="text-center">

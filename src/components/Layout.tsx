@@ -41,46 +41,51 @@ export default function Layout() {
   return (
     <XPContext.Provider value={xpData}>
       <div className="relative z-10 flex min-h-screen w-full flex-col">
-        {/* Navbar */}
-        <nav className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-2xl shadow-[0_4px_16px_rgba(108,92,231,0.04),inset_0_-1px_0_rgba(255,255,255,0.5)]">
-          <div className="mx-auto w-full max-w-5xl px-5 sm:px-8 flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-center md:gap-12">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[16px] bg-gradient-to-br from-primary to-primary-dark text-xl text-white shadow-lg shadow-primary/20">⌚</div>
-              <div>
-                <div className="text-[0.66rem] font-black uppercase tracking-[0.28em] text-primary/50">Wearable Studio</div>
-                <div className="font-[Fredoka] text-lg font-bold text-text-dark">Young CEO Challenge</div>
+        {/* Floating Pill Navbar */}
+        <div className="sticky top-4 z-50 px-4 sm:px-6 flex justify-center w-full">
+          <nav className="w-full max-w-[80rem] rounded-[2rem] border border-white/60 bg-white/70 backdrop-blur-3xl shadow-[0_8px_32px_rgba(108,92,231,0.08),inset_0_2px_4px_rgba(255,255,255,0.9)] transition-all">
+            <div className="flex flex-col gap-4 py-3 px-5 md:flex-row md:items-center md:justify-between">
+              
+              {/* Logo Area */}
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-gradient-to-br from-[#6C5CE7] to-[#A29BFE] text-2xl text-white shadow-lg shadow-[#6C5CE7]/30 hover:scale-105 transition-transform cursor-pointer">⌚</div>
+                <div className="flex flex-col justify-center">
+                  <div className="font-[Fredoka] text-xl font-bold text-text-dark tracking-tight leading-tight">Young CEO Challenge</div>
+                  <div className="text-[0.66rem] font-black uppercase tracking-[0.3em] text-[#6C5CE7]/70 mt-0.5">Wearable Studio</div>
+                </div>
               </div>
-            </div>
 
-            {/* Tabs have been removed; navbar is now clean and fully centered */}
-
-            <div className="flex items-center justify-center gap-4 bg-white/40 p-1.5 rounded-full border border-white/50 shadow-[rgba(108,92,231,0.08)_0px_4px_16px,inset_rgba(255,255,255,0.8)_0px_2px_4px]">
-              <div className={`flex h-10 items-center gap-2 rounded-full bg-gradient-to-r ${level.color} px-5 text-sm font-bold text-white shadow-lg`}>
-                <span className="text-lg">{level.emoji}</span>
-                <span className="font-[Fredoka] tracking-wide">{level.title}</span>
+              {/* XP Area */}
+              <div className="flex items-center justify-center gap-3 bg-white/50 p-1.5 rounded-full border border-white/50 shadow-[inset_0_2px_4px_rgba(255,255,255,1)]">
+                <div className={`flex h-10 items-center justify-center gap-2 rounded-full bg-gradient-to-br ${level.color} px-5 text-sm font-bold text-white shadow-md`}>
+                  <span className="text-lg">{level.emoji}</span>
+                  <span className="font-[Fredoka] tracking-wide">{level.title}</span>
+                </div>
+                
+                <div className="flex items-center gap-3 px-3 pr-5">
+                  <div className="hidden sm:block relative h-2.5 w-24 overflow-hidden rounded-full bg-surface-muted border border-black/5 shadow-inner">
+                    <motion.div 
+                      className="h-full rounded-full bg-gradient-to-r from-[#6C5CE7] via-[#A29BFE] to-[#00CEC9] shadow-[0_0_8px_rgba(108,92,231,0.5)]" 
+                      initial={{ width: 0 }} 
+                      animate={{ width: `${xpData.percentage}%` }} 
+                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} 
+                    />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xl drop-shadow-sm">⭐</span>
+                    <span className="font-[Fredoka] text-xl sm:text-2xl font-black text-text-dark tracking-tight">{xpData.xp}</span>
+                    <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-text-light/80">XP</span>
+                  </div>
+                </div>
               </div>
               
-              <div className="flex items-center gap-4 px-4 pr-6">
-                <div className="relative h-2.5 w-24 overflow-hidden rounded-full bg-primary/[0.08]">
-                  <motion.div 
-                    className="h-full rounded-full bg-gradient-to-r from-[#6C5CE7] via-[#A29BFE] to-[#00CEC9] shadow-[0_0_12px_rgba(108,92,231,0.4)]" 
-                    initial={{ width: 0 }} 
-                    animate={{ width: `${xpData.percentage}%` }} 
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} 
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl drop-shadow-sm">⭐</span>
-                  <span className="font-[Fredoka] text-2xl font-black text-text-dark tracking-tight">{xpData.xp}</span>
-                  <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-text-light/60">XP</span>
-                </div>
-              </div>
             </div>
-          </div>
-          <div className="h-[1.5px] bg-primary/[0.03]">
-            <motion.div className="h-full bg-gradient-to-r from-primary via-secondary to-accent-orange" initial={{ width: 0 }} animate={{ width: `${xpData.percentage}%` }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} />
-          </div>
-        </nav>
+            {/* Edge Progress Bar */}
+            <div className="h-[2px] bg-transparent overflow-hidden rounded-b-[2rem]">
+              <motion.div className="h-full bg-gradient-to-r from-[#6C5CE7] via-[#A29BFE] to-[#00CEC9] opacity-80" initial={{ width: 0 }} animate={{ width: `${xpData.percentage}%` }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} />
+            </div>
+          </nav>
+        </div>
 
         <XPPopup xp={xpData.xp} />
 

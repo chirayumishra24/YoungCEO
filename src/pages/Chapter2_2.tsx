@@ -1,10 +1,11 @@
-import { Suspense, lazy, useContext, useEffect } from 'react'
+import { Suspense, lazy, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import { XPContext } from '../components/Layout'
 import { ROLES } from '../constants'
+import CircuitDivider from '../components/CircuitDivider'
 
-const ActivityBackground3D = lazy(() => import('../components/ActivityBackground3D'))
+const Scene_Boardroom = lazy(() => import('../components/Scene_Boardroom'))
 
 const roleDetails: Record<string, { responsibilities: string[] }> = {
   creator: { responsibilities: ['Define the features of the smart wearable device', 'Explain how the device works', 'Make sure the invention solves a real problem'] },
@@ -24,13 +25,17 @@ const marketingIdeas = [
 export default function Chapter2_2() {
   const { addXP } = useContext(XPContext)
   const r = useReducedMotion()
+  const [activeRole, setActiveRole] = useState<string | null>(null)
 
   useEffect(() => { addXP(15, 'ch2_2_visit') }, [addXP])
+
+  const activeRoleData = ROLES.find(r => r.id === activeRole)
+  const activeRoleDetails = activeRole ? roleDetails[activeRole] : null
 
   return (
     <div className="activity-centre">
       <Suspense fallback={null}>
-        <ActivityBackground3D />
+        <Scene_Boardroom />
       </Suspense>
 
       {/* Hero Section */}
@@ -108,25 +113,63 @@ export default function Chapter2_2() {
               </div>
             </motion.section>
 
-             {/* Team Board Overview */}
+            <CircuitDivider />
+
+             {/* Role Selector */}
             <motion.section className="activity-card"
               initial={r ? undefined : { opacity: 0, y: 20 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.16 }} transition={r ? undefined : { duration: 0.5 }}>
               <div className="text-center">
-                <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-primary/50">Team Board</div>
-                <h2 className="mt-3 font-[Fredoka] text-3xl font-bold text-text-dark md:text-4xl">Meet the Team</h2>
+                <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-primary/50">Role Selector</div>
+                <h2 className="mt-3 font-[Fredoka] text-3xl font-bold text-text-dark md:text-4xl">Pick a role to explore</h2>
+                <p className="mt-3 text-base font-medium text-text-mid max-w-2xl mx-auto">Click a role to see responsibilities and speaking lines.</p>
               </div>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="mt-8 role-selector-grid">
                 {ROLES.map((role) => (
-                  <div key={role.id} className="flex items-center gap-4 rounded-[18px] border border-primary/10 bg-white/60 px-5 py-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.5)]">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-muted text-2xl border border-white">{role.emoji}</div>
-                    <div>
-                      <div className="text-base font-bold text-text-dark">{role.title}</div>
-                      <div className="text-sm font-medium text-text-mid">{role.focus}</div>
-                    </div>
-                  </div>
+                  <button key={role.id} onClick={() => setActiveRole(activeRole === role.id ? null : role.id)} className={`role-selector-btn ${activeRole === role.id ? 'active' : ''}`}>
+                    <div className="role-selector-icon">{role.emoji}</div>
+                    <div className="font-[Fredoka] text-base font-bold text-text-dark">{role.title}</div>
+                    <div className="text-xs font-medium text-text-mid">{role.focus}</div>
+                  </button>
                 ))}
               </div>
+
+              {/* Active Role Detail */}
+              <AnimatePresence mode="wait">
+                {activeRoleData && activeRoleDetails && (
+                  <motion.div
+                    key={activeRole}
+                    initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                    transition={{ duration: 0.35 }}
+                    className="mt-8 activity-card-nested flex flex-col gap-6 text-left w-full">
+                    <div className="flex items-center gap-6">
+                      <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-surface-muted text-4xl border border-white shrink-0 shadow-sm">{activeRoleData.emoji}</div>
+                      <div>
+                        <h3 className="font-[Fredoka] text-3xl font-bold text-text-dark">{activeRoleData.title}</h3>
+                        <div className="mt-2 text-xs font-bold text-primary bg-primary/10 px-4 py-1.5 rounded-full w-fit">{activeRoleData.focus}</div>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="rounded-[20px] bg-primary/[0.03] p-7 border border-primary/5">
+                        <div className="text-[0.7rem] font-black uppercase tracking-[0.22em] text-primary/40 mb-4">Responsibilities</div>
+                        <ul className="space-y-3">
+                          {activeRoleDetails.responsibilities.map((resp: string) => (
+                            <li key={resp} className="flex items-start gap-3 text-lg font-medium text-text-mid leading-snug">
+                              <span className="text-primary mt-1">✦</span><span>{resp}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="rounded-[20px] bg-secondary/[0.04] p-7 border border-secondary/10 flex flex-col items-center">
+                        <div className="text-[0.7rem] font-black uppercase tracking-[0.25em] text-secondary/60 mb-4">Say This</div>
+                        <p className="text-center font-[Fredoka] text-[1.45rem] font-bold text-text-dark leading-tight italic">"{activeRoleData.say}"</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.section>
 
             {/* Role Cards List */}

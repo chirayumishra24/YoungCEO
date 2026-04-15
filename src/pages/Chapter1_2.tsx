@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { XPContext } from '../components/Layout'
 
-const ActivityBackground3D = lazy(() => import('../components/ActivityBackground3D'))
+const Scene_ArtStudio = lazy(() => import('../components/Scene_ArtStudio'))
 
 const COLORS = ['#e8eeff', '#ff2d78', '#97CE4C', '#00f0ff', '#FFD700', '#a855f7', '#ff8a65', '#3b82f6']
 const BRUSH_SIZES = [3, 6, 10, 16]
@@ -230,7 +230,7 @@ export default function Chapter1_2() {
   return (
     <div className="activity-centre">
       <Suspense fallback={null}>
-        <ActivityBackground3D />
+        <Scene_ArtStudio />
       </Suspense>
 
       {/* Hero Section */}
