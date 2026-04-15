@@ -44,11 +44,11 @@ function Float({ children, position, speed = 1, floatY = 0.8, rotSpeed = 0.12 }:
 /* ── celebration sparkles ── */
 function CelebrationSparkles() {
   const ref = useRef<THREE.Points>(null!)
-  const { positions, colors, sizes } = useMemo(() => {
+  const { positions, colors } = useMemo(() => {
     const n = 300
     const pos = new Float32Array(n * 3)
     const col = new Float32Array(n * 3)
-    const siz = new Float32Array(n)
+
     const palette = [
       new THREE.Color('#FFD700'), new THREE.Color('#FFA502'),
       new THREE.Color('#FF6B6B'), new THREE.Color('#a855f7'),
@@ -64,9 +64,9 @@ function CelebrationSparkles() {
       pos[i * 3 + 2] = Math.sin(a) * Math.cos(b) * r * 0.5 - 5
       const c = palette[Math.floor(Math.random() * palette.length)]
       col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
-      siz[i] = 0.08 + Math.random() * 0.12
+
     }
-    return { positions: pos, colors: col, sizes: siz }
+    return { positions: pos, colors: col }
   }, [])
   useFrame(({ clock }) => {
     ref.current.rotation.y = clock.elapsedTime * 0.02

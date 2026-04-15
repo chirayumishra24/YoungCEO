@@ -2,7 +2,7 @@ import { Suspense, lazy, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { XPContext } from '../components/Layout'
-import { IMAGES, SKILLS } from '../constants'
+
 import CircuitDivider from '../components/CircuitDivider'
 
 const ThreeBackground = lazy(() => import('../components/ThreeBackground'))

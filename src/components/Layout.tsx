@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useXP } from './XPCounter'
-import { PageContainer, cx } from './StudioPage'
+
 
 export const XPContext = createContext<ReturnType<typeof useXP>>({ xp: 0, addXP: () => false, percentage: 0 })
 

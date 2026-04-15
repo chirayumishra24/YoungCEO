@@ -225,7 +225,6 @@ export default function Chapter1_2() {
     hasDrawn,
     previewReady,
   ]
-  const progress = (progressChecks.filter(Boolean).length / progressChecks.length) * 100
 
   return (
     <div className="activity-centre">

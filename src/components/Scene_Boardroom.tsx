@@ -129,7 +129,7 @@ function Handshake({ position }: { position: [number, number, number] }) {
 }
 
 /* ── role badge ── */
-function RoleBadge({ position, color, emoji }: { position: [number, number, number]; color: string; emoji?: string }) {
+function RoleBadge({ position, color }: { position: [number, number, number]; color: string }) {
   const ref = useRef<THREE.Group>(null!)
   useFrame(({ clock }) => {
     ref.current.rotation.y = Math.sin(clock.elapsedTime * 0.5) * 0.3
