@@ -219,13 +219,6 @@ export default function Chapter1_2() {
   const saveDesign = () => { if (hasDrawn && brandName) addXP(40, 'design_saved') }
   const previewReady = Boolean(brandName && (tagline || hasDrawn))
 
-  const progressChecks = [
-    Boolean(brandName),
-    Boolean(tagline),
-    hasDrawn,
-    previewReady,
-  ]
-
   return (
     <div className="activity-centre">
       <Suspense fallback={null}>
