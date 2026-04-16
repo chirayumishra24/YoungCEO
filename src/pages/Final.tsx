@@ -1,7 +1,8 @@
-import { Suspense, lazy, useContext, useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { XPContext } from '../components/Layout'
+import { useXP } from '../context/XPContext'
+import { ChapterLayout } from '../components/ChapterLayout'
 import { SKILLS } from '../constants'
 import Confetti from 'react-confetti'
 import JourneyTimeline from '../components/JourneyTimeline'
@@ -18,7 +19,7 @@ const presentationItems = [
 ]
 
 export default function Final() {
-  const { addXP, xp } = useContext(XPContext)
+  const { addXP, xp } = useXP()
   const [showConfetti, setShowConfetti] = useState(false)
   const r = useReducedMotion()
 
@@ -39,11 +40,7 @@ export default function Final() {
         : { title: 'Intern', emoji: '🌱', color: 'bg-surface-muted', glow: 'shadow-surface-muted/40', bar: 'from-border-soft to-surface-muted' }
 
   return (
-    <div className="activity-centre">
-      <Suspense fallback={null}>
-        <Scene_TrophyRoom />
-      </Suspense>
-
+    <>
       {/* Confetti Overlay */}
       {showConfetti && (
         <div className="pointer-events-none fixed inset-0 z-[100]">
@@ -51,64 +48,45 @@ export default function Final() {
         </div>
       )}
 
-      {/* Hero Section */}
-      <section className="activity-hero">
-        <div className="activity-hero-content">
-          <div className="activity-hero-text">
-            <motion.div initial={r ? undefined : { opacity: 0, x: -30 }} animate={r ? undefined : { opacity: 1, x: 0 }} transition={r ? undefined : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-              <div className="activity-hero-badge">
-                <span className={`h-2.5 w-2.5 rounded-full ${level.color} animate-pulse shadow-lg ${level.glow}`} />
-                <span className="text-xs font-black uppercase tracking-[0.28em] text-text-mid">Final Presentation</span>
-              </div>
-              <h1 className="activity-hero-title">
-                Shark Pitch<br />
-                <span className="rainbow-text">Competition</span> 🎤
-              </h1>
-
-              <p className="activity-hero-desc mt-6">
-                The course ends with one strong stage, a clear presentation checklist, and a final celebration moment.
-              </p>
-              
-              <div className="flex flex-wrap gap-3 mt-6">
-                <span className="activity-chip-info">Final showcase</span>
-                <span className="activity-chip-info">XP celebration</span>
-                <span className="activity-chip-info">CEO level reveal</span>
-              </div>
-
-              {/* XP Progress Badge embedded in hero */}
-              <div className="mt-8 p-6 rounded-[24px] bg-white border border-primary/10 shadow-[8px_8px_0px_#A259FF] transform transition-transform hover:-translate-y-1">
-                 <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-text-mid mb-3">Your CEO Level</div>
-                 <div className="inline-flex rounded-full bg-surface-soft px-4 py-2 text-base font-bold text-text-dark border border-border-soft mb-4">
-                    {level.emoji} {level.title}
-                 </div>
-                 <div className="h-4 overflow-hidden rounded-full bg-surface-muted border border-border-soft/50 shadow-inner">
-                  <motion.div
-                    className={`h-full rounded-full bg-gradient-to-r ${level.bar}`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((xp / 500) * 100, 100)}%` }}
-                    transition={{ duration: 1, ease: 'easeOut' }}
-                  />
-                </div>
-                <div className="mt-2 text-sm font-bold text-primary">{xp} <span className="text-text-mid font-medium">/ 500 XP</span></div>
-              </div>
-            </motion.div>
+      <ChapterLayout
+        scene={<Scene_TrophyRoom />}
+        moduleChapter="Final Presentation"
+        title={<>Shark Pitch<br /><span className="rainbow-text">Competition</span> 🎤</>}
+        desc="The course ends with one strong stage, a clear presentation checklist, and a final celebration moment."
+        chips={
+          <>
+            <span className="activity-chip-info">Final showcase</span>
+            <span className="activity-chip-info">XP celebration</span>
+            <span className="activity-chip-info">CEO level reveal</span>
+          </>
+        }
+        heroBottom={
+          <div className="mt-8 p-6 rounded-[24px] bg-white border border-primary/10 shadow-[8px_8px_0px_#A259FF] transform transition-transform hover:-translate-y-1 block w-full">
+            <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-text-mid mb-3">Your CEO Level</div>
+            <div className="inline-flex rounded-full bg-surface-soft px-4 py-2 text-base font-bold text-text-dark border border-border-soft mb-4">
+              {level.emoji} {level.title}
+            </div>
+            <div className="h-4 overflow-hidden rounded-full bg-surface-muted border border-border-soft/50 shadow-inner">
+              <motion.div
+                className={`h-full rounded-full bg-gradient-to-r ${level.bar}`}
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min((xp / 500) * 100, 100)}%` }}
+                transition={{ duration: 1, ease: 'easeOut' }}
+              />
+            </div>
+            <div className="mt-2 text-sm font-bold text-primary">{xp} <span className="text-text-mid font-medium">/ 500 XP</span></div>
           </div>
-
-          <motion.div className="activity-hero-aside"
-            initial={r ? undefined : { opacity: 0, x: 30, scale: 0.95 }}
-            animate={r ? undefined : { opacity: 1, x: 0, scale: 1 }}
-            transition={r ? undefined : { duration: 0.7, delay: 0.2 }}>
-            <img 
-              src="/images/final_trophy_1776241882840.png" 
-              alt="Golden Trophy with Confetti" 
-              className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-110"
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Journey Timeline */}
-      <div className="activity-content" style={{ marginBottom: '1rem' }}>
+        }
+        heroAside={
+          <img 
+            src="/images/final_trophy_1776241882840.png" 
+            alt="Golden Trophy with Confetti" 
+            className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-110"
+          />
+        }
+      >
+        {/* Journey Timeline */}
+        <div className="activity-content" style={{ marginBottom: '1rem' }}>
         <motion.section className="activity-card tilt-card"
           initial={r ? undefined : { opacity: 0, y: 20 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.16 }} transition={r ? undefined : { duration: 0.5 }}>
@@ -234,7 +212,7 @@ export default function Final() {
 
           </div>
         </div>
-      </div>
-    </div>
+      </ChapterLayout>
+    </>
   )
 }

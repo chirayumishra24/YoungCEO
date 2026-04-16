@@ -1,7 +1,8 @@
-import { Suspense, lazy, useContext, useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
-import { XPContext } from '../components/Layout'
+import { useXP } from '../context/XPContext'
+import { ChapterLayout } from '../components/ChapterLayout'
 import { ROLES } from '../constants'
 import CircuitDivider from '../components/CircuitDivider'
 
@@ -23,7 +24,7 @@ const marketingIdeas = [
 ]
 
 export default function Chapter2_2() {
-  const { addXP } = useContext(XPContext)
+  const { addXP } = useXP()
   const r = useReducedMotion()
   const [activeRole, setActiveRole] = useState<string | null>(null)
 
@@ -33,58 +34,34 @@ export default function Chapter2_2() {
   const activeRoleDetails = activeRole ? roleDetails[activeRole] : null
 
   return (
-    <div className="activity-centre">
-      <Suspense fallback={null}>
-        <Scene_Boardroom />
-      </Suspense>
-
-      {/* Hero Section */}
-      {/* Hero Section */}
-      <section className="activity-hero">
-        <div className="activity-hero-content">
-          <div className="activity-hero-text">
-            <motion.div initial={r ? undefined : { opacity: 0, x: -30 }} animate={r ? undefined : { opacity: 1, x: 0 }} transition={r ? undefined : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-              <div className="activity-hero-badge">
-                <span className="h-2.5 w-2.5 rounded-full bg-secondary animate-pulse shadow-lg shadow-secondary/40" />
-                <span className="text-xs font-black uppercase tracking-[0.28em] text-text-mid">Module 2 · Chapter 2</span>
-              </div>
-              <h1 className="activity-hero-title">
-                Team<br />
-                <span className="rainbow-text">Roleplay</span> 💼
-              </h1>
-
-              <p className="activity-hero-desc mt-8">
-                Students step into startup roles so they can understand how one invention becomes stronger when different people own different jobs.
-              </p>
-              
-              <div className="flex flex-wrap gap-3 mt-6">
-                <span className="activity-chip-info">👥 5 startup roles</span>
-                <span className="activity-chip-info">⚙️ Clear responsibilities</span>
-                <span className="activity-chip-info">📣 Speaking lines</span>
-              </div>
-
-              <div className="flex flex-col items-center gap-4 mt-10 sm:flex-row">
-                <Link to="/final" className="no-underline">
-                   <button className="btn-primary text-xl px-12 py-5 shadow-xl">Next: Final Pitch →</button>
-                </Link>
-                <a href="#role-cards" className="btn-secondary px-8 py-5 text-base">View Roles ↓</a>
-              </div>
-            </motion.div>
-          </div>
-
-          <motion.div className="activity-hero-aside"
-            initial={r ? undefined : { opacity: 0, x: 30, scale: 0.95 }}
-            animate={r ? undefined : { opacity: 1, x: 0, scale: 1 }}
-            transition={r ? undefined : { duration: 0.7, delay: 0.2 }}>
-            <img 
-              src="/images/ch2_2_team_1776241857401.png" 
-              alt="Floating Puzzle Pieces for Teamwork" 
-              className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-110"
-            />
-          </motion.div>
-        </div>
-      </section>
-
+    <ChapterLayout
+      scene={<Scene_Boardroom />}
+      moduleChapter="Module 2 · Chapter 2"
+      title={<>Team<br /><span className="rainbow-text">Roleplay</span> 💼</>}
+      desc="Students step into startup roles so they can understand how one invention becomes stronger when different people own different jobs."
+      chips={
+        <>
+          <span className="activity-chip-info">👥 5 startup roles</span>
+          <span className="activity-chip-info">⚙️ Clear responsibilities</span>
+          <span className="activity-chip-info">📣 Speaking lines</span>
+        </>
+      }
+      heroActions={
+        <>
+          <Link to="/final" className="no-underline">
+             <button className="btn-primary text-xl px-12 py-5 shadow-xl">Next: Final Pitch →</button>
+          </Link>
+          <a href="#role-cards" className="btn-secondary px-8 py-5 text-base">View Roles ↓</a>
+        </>
+      }
+      heroAside={
+        <img 
+          src="/images/ch2_2_team_1776241857401.png" 
+          alt="Floating Puzzle Pieces for Teamwork" 
+          className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-110"
+        />
+      }
+    >
       {/* Main Content */}
       <div className="activity-content">
         <div className="activity-grid">
@@ -300,6 +277,6 @@ export default function Chapter2_2() {
           </div>
         </div>
       </div>
-    </div>
+    </ChapterLayout>
   )
 }

@@ -1,7 +1,8 @@
-import { Suspense, lazy, useContext, useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { XPContext } from '../components/Layout'
+import { useXP } from '../context/XPContext'
+import { ChapterLayout } from '../components/ChapterLayout'
 import CircuitDivider from '../components/CircuitDivider'
 
 const Scene_Stage = lazy(() => import('../components/Scene_Stage'))
@@ -15,48 +16,26 @@ const pitchSteps = [
 ]
 
 export default function Chapter2_1() {
-  const { addXP } = useContext(XPContext)
-  const r = useReducedMotion()
-
-  useEffect(() => { addXP(15, 'ch2_1_visit') }, [addXP])
-
   return (
-    <div className="activity-centre">
-      <Suspense fallback={null}>
-        <Scene_Stage />
-      </Suspense>
-
-      {/* Hero Section */}
-      <section className="activity-hero">
-        <div className="activity-hero-content">
-          <motion.div initial={r ? undefined : { opacity: 0, x: -30 }} animate={r ? undefined : { opacity: 1, x: 0 }} transition={r ? undefined : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="flex-1">
-            <div className="activity-hero-badge">
-              <span className="h-2.5 w-2.5 rounded-full bg-accent-orange animate-pulse shadow-lg shadow-accent-orange/40" />
-              <span className="text-xs font-black uppercase tracking-[0.28em] text-text-mid">Module 2 · Chapter 1</span>
-            </div>
-            <h1 className="activity-hero-title">
-              Startup<br />
-              <span className="rainbow-text">Pitch</span> 🎤
-            </h1>
-            <p className="activity-hero-desc mt-6">
-              Time to convince the investors why your smart wearable is the future! Keep it short, clear, and confident.
-            </p>
-            <div className="flex flex-wrap gap-3 mt-6">
-              <span className="activity-chip-info">🎙️ Stage mode</span>
-              <span className="activity-chip-info">📝 5 pitch parts</span>
-              <span className="activity-chip-info">💡 Example lines</span>
-            </div>
-            <div className="flex flex-col items-center gap-4 mt-8 sm:flex-row">
-              <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="btn-primary text-lg px-10 py-4">Start Pitch Prep ↓</button>
-            </div>
-          </motion.div>
-
-          <motion.div initial={r ? undefined : { opacity: 0, x: 30 }} animate={r ? undefined : { opacity: 1, x: 0 }} transition={r ? undefined : { duration: 0.8, delay: 0.2 }} className="flex-1 hidden lg:block">
-            <img src="/images/ch2_1_pitch_1776241841451.png" alt="Startup Pitch" className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-105" />
-          </motion.div>
-        </div>
-      </section>
-
+    <ChapterLayout
+      scene={<Scene_Stage />}
+      moduleChapter="Module 2 · Chapter 1"
+      title={<>Startup<br /><span className="rainbow-text">Pitch</span> 🎤</>}
+      desc="Time to convince the investors why your smart wearable is the future! Keep it short, clear, and confident."
+      chips={
+        <>
+          <span className="activity-chip-info">🎙️ Stage mode</span>
+          <span className="activity-chip-info">📝 5 pitch parts</span>
+          <span className="activity-chip-info">💡 Example lines</span>
+        </>
+      }
+      heroActions={
+        <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="btn-primary text-lg px-10 py-4">Start Pitch Prep ↓</button>
+      }
+      heroAside={
+        <img src="/images/ch2_1_pitch_1776241841451.png" alt="Startup Pitch" className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-105 hidden lg:block" />
+      }
+    >
       {/* Main Content */}
       <div className="activity-content">
         <div className="activity-grid">
@@ -200,6 +179,6 @@ export default function Chapter2_1() {
           </div>
         </div>
       </div>
-    </div>
+    </ChapterLayout>
   )
 }

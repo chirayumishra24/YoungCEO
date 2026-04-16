@@ -1,9 +1,10 @@
 import { Suspense, lazy, useContext, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
-import { XPContext } from '../components/Layout'
+import { useXP } from '../context/XPContext'
 import { DEVICES, IDEA_EXAMPLES } from '../constants'
-import PhaseTracker from '../components/PhaseTracker'
+import { ChapterLayout } from '../components/ChapterLayout'
+import { PhaseTracker, ProgressRing } from '../components/UIComponents'
 import CircuitDivider from '../components/CircuitDivider'
 
 const Scene_InventorLab = lazy(() => import('../components/Scene_InventorLab'))
@@ -157,73 +158,48 @@ export default function Chapter1_1() {
   }
 
   return (
-    <div className="activity-centre">
-      {/* Immersive 3D Background — Inventor's Lab */}
-      <Suspense fallback={null}>
-        <Scene_InventorLab />
-      </Suspense>
-
-      {/* Hero Section */}
-      <section className="activity-hero">
-        <div className="activity-hero-content">
-          <motion.div className="activity-hero-text" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease }}>
-            <div className="activity-hero-badge">
-              <span className="h-2.5 w-2.5 rounded-full bg-secondary animate-pulse shadow-lg shadow-secondary/40" />
-              <span className="text-xs font-black uppercase tracking-[0.28em] text-text-mid">Module 1 · Chapter 1</span>
-            </div>
-            <h1 className="activity-hero-title">
-              Build Your<br />
-              <span className="rainbow-text">Product Idea</span> 🚀
-            </h1>
-            
-            <p className="activity-hero-desc mt-8">
-              Start with a real problem, choose a wearable, add cool powers, and build a mini startup pitch!
-            </p>
-
-            <div className="flex flex-wrap gap-3 mt-6">
-              <span className="activity-chip-info">🎯 Mission-first activity</span>
-              <span className="activity-chip-info">🔢 4 simple steps</span>
-              <span className="activity-chip-info">📋 Sticky live pitch card</span>
-            </div>
-
-            <div className="flex flex-col items-center gap-4 mt-10 sm:flex-row">
-              <button className="btn-primary text-xl px-12 py-5" onClick={generateSurpriseCombo}>⚡ Surprise Combo</button>
-              <a href="#mission-board" className="btn-secondary px-8 py-5 text-base">Start Building ↓</a>
-            </div>
-          </motion.div>
-
-          {/* Progress + Mission Meter Aside */}
-          <motion.div className="activity-hero-aside"
-            initial={{ opacity: 0, x: 30, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2 }}>
-            <div className="activity-card !p-8 shadow-2xl">
-              <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-primary/50 text-center mb-6">Mission Meter</div>
-              <div className="flex justify-center">
-                <ProgressRing progress={progress} />
+    <ChapterLayout
+      scene={<Scene_InventorLab />}
+      moduleChapter="Module 1 · Chapter 1"
+      title={<>Build Your<br /><span className="rainbow-text">Product Idea</span> 🚀</>}
+      desc="Start with a real problem, choose a wearable, add cool powers, and build a mini startup pitch!"
+      chips={
+        <>
+          <span className="activity-chip-info">🎯 Mission-first activity</span>
+          <span className="activity-chip-info">🔢 4 simple steps</span>
+          <span className="activity-chip-info">📋 Sticky live pitch card</span>
+        </>
+      }
+      heroActions={
+        <>
+          <button className="btn-primary text-xl px-12 py-5" onClick={generateSurpriseCombo}>⚡ Surprise Combo</button>
+          <a href="#mission-board" className="btn-secondary px-8 py-5 text-base">Start Building ↓</a>
+        </>
+      }
+      heroAside={
+        <div className="activity-card !p-8 shadow-2xl">
+          <div className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-primary/50 text-center mb-6">Mission Meter</div>
+          <div className="flex justify-center">
+            <ProgressRing progress={progress} />
+          </div>
+          <div className="mt-8 space-y-3">
+            {[
+              { done: progressChecks[0], label: 'Pick the student problem', emoji: '🎯' },
+              { done: progressChecks[1], label: 'Choose the wearable', emoji: '⌚' },
+              { done: progressChecks[2], label: 'Add the powers', emoji: '⚡' },
+              { done: progressChecks[3], label: 'Finish the founder card', emoji: '📋' },
+            ].map((step) => (
+              <div key={step.label} className={`activity-checklist-item ${step.done ? 'done' : ''}`}>
+                <div className={`activity-checklist-icon ${step.done ? 'done' : ''}`}>
+                  {step.done ? '✓' : step.emoji}
+                </div>
+                <span className={`text-sm font-bold ${step.done ? 'text-text-dark' : 'text-text-light'}`}>{step.label}</span>
               </div>
-              <div className="mt-8 space-y-3">
-                {[
-                  { done: progressChecks[0], label: 'Pick the student problem', emoji: '🎯' },
-                  { done: progressChecks[1], label: 'Choose the wearable', emoji: '⌚' },
-                  { done: progressChecks[2], label: 'Add the powers', emoji: '⚡' },
-                  { done: progressChecks[3], label: 'Finish the founder card', emoji: '📋' },
-                ].map((step) => (
-                  <div key={step.label} className={`activity-checklist-item ${step.done ? 'done' : ''}`}>
-                    <div className={`activity-checklist-icon ${step.done ? 'done' : ''}`}>
-                      {step.done ? '✓' : step.emoji}
-                    </div>
-                    <span className={`text-sm font-bold ${step.done ? 'text-text-dark' : 'text-text-light'}`}>{step.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+            ))}
+          </div>
         </div>
-      </section>
-
-      {/* Phase Tracker */}
-      <div className="activity-content" style={{ marginBottom: '1rem' }}>
+      }
+      tracker={
         <PhaseTracker
           activeIndex={progressChecks.findIndex(c => !c)}
           steps={[
@@ -233,8 +209,8 @@ export default function Chapter1_1() {
             { label: 'Founder', emoji: '📋', done: progressChecks[3] },
           ]}
         />
-      </div>
-
+      }
+    >
       {/* Main Content */}
       <div className="activity-content">
         <div className="activity-grid-sidebar">
@@ -475,6 +451,6 @@ export default function Chapter1_1() {
           </div>
         </div>
       </div>
-    </div>
+    </ChapterLayout>
   )
 }

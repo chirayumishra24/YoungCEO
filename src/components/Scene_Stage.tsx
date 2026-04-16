@@ -1,82 +1,7 @@
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
-
-function useMousePosition() {
-  const mouse = useRef({ x: 0, y: 0 })
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current.x = (e.clientX / window.innerWidth - 0.5) * 2
-      mouse.current.y = -(e.clientY / window.innerHeight - 0.5) * 2
-    }
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [])
-  return mouse
-}
-
-function ParallaxCamera() {
-  const mouse = useMousePosition()
-  useFrame(({ camera, clock }) => {
-    const t = clock.elapsedTime
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouse.current.x * 2.5 + Math.sin(t * 0.12) * 0.6, 0.025)
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, mouse.current.y * 1.8 + Math.cos(t * 0.1) * 0.4, 0.025)
-    camera.lookAt(0, 0, 0)
-  })
-  return null
-}
-
-function Float({ children, position, speed = 1, floatY = 0.8, rotSpeed = 0.12 }: {
-  children: React.ReactNode; position: [number, number, number]; speed?: number; floatY?: number; rotSpeed?: number
-}) {
-  const ref = useRef<THREE.Group>(null!)
-  const offset = useMemo(() => Math.random() * Math.PI * 2, [])
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime
-    ref.current.position.y = position[1] + Math.sin(t * speed * 0.5 + offset) * floatY
-    ref.current.position.x = position[0] + Math.cos(t * speed * 0.3 + offset) * 0.3
-    ref.current.rotation.y += rotSpeed * 0.008
-    ref.current.rotation.x = Math.sin(t * speed * 0.2 + offset) * 0.15
-  })
-  return <group ref={ref} position={position}>{children}</group>
-}
-
-function Sparkles() {
-  const ref = useRef<THREE.Points>(null!)
-  const { positions, colors } = useMemo(() => {
-    const n = 200
-    const pos = new Float32Array(n * 3)
-    const col = new Float32Array(n * 3)
-    const palette = [
-      new THREE.Color('#FFD700'), new THREE.Color('#6C5CE7'),
-      new THREE.Color('#FFA502'), new THREE.Color('#a855f7'),
-      new THREE.Color('#FDCB6E'), new THREE.Color('#5A4BD1'),
-    ]
-    for (let i = 0; i < n; i++) {
-      const r = 4 + Math.random() * 18
-      const a = Math.random() * Math.PI * 2
-      const b = (Math.random() - 0.5) * Math.PI
-      pos[i * 3] = Math.cos(a) * Math.cos(b) * r
-      pos[i * 3 + 1] = Math.sin(b) * r * 0.6
-      pos[i * 3 + 2] = Math.sin(a) * Math.cos(b) * r * 0.5 - 5
-      const c = palette[Math.floor(Math.random() * palette.length)]
-      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
-    }
-    return { positions: pos, colors: col }
-  }, [])
-  useFrame(({ clock }) => {
-    ref.current.rotation.y = clock.elapsedTime * 0.015
-  })
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-      </bufferGeometry>
-      <pointsMaterial size={0.13} vertexColors transparent opacity={0.45} depthWrite={false} sizeAttenuation />
-    </points>
-  )
-}
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { Shared3DEnvironment, Sparkles, Float, useResponsiveScale } from './Shared3DEnvironment'
 
 /* ── microphone ── */
 function Microphone({ position }: { position: [number, number, number] }) {
@@ -181,11 +106,6 @@ function Spotlight({ position }: { position: [number, number, number] }) {
   )
 }
 
-function useResponsiveScale() {
-  const { size } = useThree()
-  return size.width < 640 ? 0.55 : size.width < 1024 ? 0.75 : 1
-}
-
 function Scene() {
   const s = useResponsiveScale()
   return (
@@ -197,8 +117,7 @@ function Scene() {
       <pointLight position={[0, 10, 5]} intensity={0.4} color="#FFA502" />
       <fog attach="fog" args={['#F0EEFF', 16, 38]} />
 
-      <ParallaxCamera />
-      <Sparkles />
+      <Sparkles palette={['#FFD700', '#6C5CE7', '#FFA502', '#a855f7', '#FDCB6E', '#5A4BD1']} size={0.13} />
 
       {/* Microphones */}
       <Microphone position={[-7 * s, 4 * s, -5]} />
@@ -224,18 +143,9 @@ function Scene() {
 }
 
 export default function Scene_Stage() {
-  const [visible, setVisible] = useState(true)
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mq.matches) setVisible(false)
-  }, [])
-  if (!visible) return null
-
   return (
-    <div className="activity-3d-bg" aria-hidden="true">
-      <Canvas camera={{ position: [0, 0, 20], fov: 50 }} dpr={[1, 1.5]} gl={{ alpha: true, antialias: true }} style={{ pointerEvents: 'none' }}>
-        <Scene />
-      </Canvas>
-    </div>
+    <Shared3DEnvironment>
+      <Scene />
+    </Shared3DEnvironment>
   )
 }

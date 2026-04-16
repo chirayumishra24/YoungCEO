@@ -1,7 +1,8 @@
-import { Suspense, lazy, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { XPContext } from '../components/Layout'
+import { useXP } from '../context/XPContext'
+import { ChapterLayout } from '../components/ChapterLayout'
 
 const Scene_ArtStudio = lazy(() => import('../components/Scene_ArtStudio'))
 
@@ -27,7 +28,7 @@ function StepBadge({ step, label }: { step: number; label: string }) {
 }
 
 export default function Chapter1_2() {
-  const { addXP } = useContext(XPContext)
+  const { addXP } = useXP()
   const r = useReducedMotion()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   
@@ -220,55 +221,32 @@ export default function Chapter1_2() {
 
 
   return (
-    <div className="activity-centre">
-      <Suspense fallback={null}>
-        <Scene_ArtStudio />
-      </Suspense>
-
-      {/* Hero Section */}
-      <section className="activity-hero">
-        <div className="activity-hero-content">
-          <div className="activity-hero-text">
-            <motion.div initial={r ? undefined : { opacity: 0, x: -30 }} animate={r ? undefined : { opacity: 1, x: 0 }} transition={r ? undefined : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-              <div className="activity-hero-badge">
-                <span className="h-2.5 w-2.5 rounded-full bg-secondary animate-pulse shadow-lg shadow-secondary/40" />
-                <span className="text-xs font-black uppercase tracking-[0.28em] text-text-mid">Module 1 · Chapter 2</span>
-              </div>
-              <h1 className="activity-hero-title">
-                Wearable<br />
-                <span className="rainbow-text">Design Lab</span> 🎨
-              </h1>
-              
-              <p className="activity-hero-desc mt-8">
-                Students turn the product idea into something visual: brand name, tagline, sketch, and a clearer product identity.
-              </p>
-              
-              <div className="flex flex-wrap gap-3 mt-6">
-                <span className="activity-chip-info">🏷️ Brand it</span>
-                <span className="activity-chip-info">✍️ Sketch it</span>
-                <span className="activity-chip-info">👁️ Preview it</span>
-              </div>
-
-              <div className="flex flex-col items-center gap-4 mt-10 sm:flex-row">
-                <button className="btn-primary text-lg px-10 py-4" onClick={saveDesign}>💾 Save My Design</button>
-                <a href="#brand-name" className="btn-secondary px-8 py-4 text-base">Start Lab ↓</a>
-              </div>
-            </motion.div>
-          </div>
-
-          <motion.div className="activity-hero-aside"
-            initial={r ? undefined : { opacity: 0, x: 30, scale: 0.95 }}
-            animate={r ? undefined : { opacity: 1, x: 0, scale: 1 }}
-            transition={r ? undefined : { duration: 0.7, delay: 0.2 }}>
-            <img 
-              src="/images/ch1_2_design_1776241826488.png" 
-              alt="Design Lab Glowing Tablet" 
-              className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-105"
-            />
-          </motion.div>
-        </div>
-      </section>
-
+    <ChapterLayout
+      scene={<Scene_ArtStudio />}
+      moduleChapter="Module 1 · Chapter 2"
+      title={<>Wearable<br /><span className="rainbow-text">Design Lab</span> 🎨</>}
+      desc="Students turn the product idea into something visual: brand name, tagline, sketch, and a clearer product identity."
+      chips={
+        <>
+          <span className="activity-chip-info">🏷️ Brand it</span>
+          <span className="activity-chip-info">✍️ Sketch it</span>
+          <span className="activity-chip-info">👁️ Preview it</span>
+        </>
+      }
+      heroActions={
+        <>
+          <button className="btn-primary text-lg px-10 py-4" onClick={saveDesign}>💾 Save My Design</button>
+          <a href="#brand-name" className="btn-secondary px-8 py-4 text-base">Start Lab ↓</a>
+        </>
+      }
+      heroAside={
+        <img 
+          src="/images/ch1_2_design_1776241826488.png" 
+          alt="Design Lab Glowing Tablet" 
+          className="mx-auto w-full max-w-sm rounded-[32px] shadow-2xl object-cover transform transition-transform hover:scale-105"
+        />
+      }
+    >
       {/* Main Content */}
       <div className="activity-content">
         <div className="activity-grid">
@@ -490,6 +468,6 @@ export default function Chapter1_2() {
           </div>
         </div>
       </div>
-    </div>
+    </ChapterLayout>
   )
 }
