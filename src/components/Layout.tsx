@@ -95,15 +95,15 @@ export default function Layout() {
               </Link>
 
               {/* XP Area */}
-              <div className="flex items-center gap-3">
-                <div className={`hidden sm:flex h-9 items-center gap-2.5 rounded-full bg-gradient-to-br ${level.gradient} px-5 text-[0.72rem] font-bold text-white shadow-md`}>
-                  <span className="text-base">{level.emoji}</span>
-                  <span className="font-[Fredoka] tracking-wide">{level.title}</span>
+              <div className="flex items-center gap-2.5">
+                <div className={`hidden sm:flex items-center gap-2 rounded-full bg-gradient-to-br ${level.gradient} py-1.5 px-4 shadow-sm`}>
+                  <span className="text-sm leading-none">{level.emoji}</span>
+                  <span className="font-[Fredoka] text-[0.75rem] font-bold text-white tracking-wide leading-none">{level.title}</span>
                 </div>
-                <div className="flex items-center gap-2.5 bg-white/50 rounded-full px-5 py-2.5 border border-border-soft/30 shadow-sm">
-                  <span className="text-lg">⭐</span>
-                  <span className="font-[Fredoka] text-lg font-black text-text-dark">{xpData.xp}</span>
-                  <span className="text-[0.62rem] font-black uppercase tracking-wider text-text-light">XP</span>
+                <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md rounded-full py-1.5 px-4 border border-border-soft/20 shadow-sm">
+                  <span className="text-base leading-none">⭐</span>
+                  <span className="font-[Fredoka] text-base font-black text-text-dark leading-none">{xpData.xp}</span>
+                  <span className="text-[0.6rem] font-black uppercase tracking-wider text-text-light leading-none pt-0.5">XP</span>
                 </div>
               </div>
             </div>

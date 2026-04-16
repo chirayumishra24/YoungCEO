@@ -171,18 +171,18 @@ export default function Home() {
                     <div className="flex flex-col gap-5 w-full">
                       {module.chapters.map((chapter) => (
                         <Link key={chapter.path} to={chapter.path} className="block no-underline transform transition-transform hover:-translate-y-1">
-                          <div className="rounded-[28px] border border-white/80 border-l-4 border-l-primary bg-white/70 p-6 sm:p-8 shadow-[8px_8px_20px_rgba(0,0,0,0.03),-4px_-4px_12px_rgba(255,255,255,0.8)] hover:bg-white/90 hover:shadow-[0_8px_30px_rgba(108,92,231,0.12)] transition-all">
-                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-left">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3">
-                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-sm font-black text-white shadow-lg shadow-primary/25 border border-white/20">{chapter.num}</div>
-                                  <h4 className="font-[Fredoka] text-2xl font-bold text-text-dark">{chapter.title}</h4>
+                          <div className="rounded-[24px] border border-white bg-white/60 p-6 shadow-sm hover:bg-white/80 hover:shadow-md transition-all">
+                            <div className="flex flex-col xl:flex-row xl:items-center gap-6">
+                              <div className="flex items-center gap-4 flex-1">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-white font-black text-lg shadow-md shadow-primary/20">{chapter.num}</div>
+                                <div>
+                                  <h4 className="font-[Fredoka] text-2xl font-bold text-text-dark leading-tight">{chapter.title}</h4>
+                                  <p className="mt-1.5 text-sm font-medium text-text-mid pr-4">{chapter.desc}</p>
                                 </div>
-                                <p className="mt-3 text-sm font-medium leading-relaxed text-text-mid md:ml-13 sm:w-11/12">{chapter.desc}</p>
                               </div>
-                              <div className="hidden lg:flex shrink-0 flex-wrap gap-2 sm:max-w-xs sm:justify-end">
+                              <div className="flex flex-wrap gap-2 xl:justify-end shrink-0">
                                 {chapter.chips.map((chip) => (
-                                  <span key={chip} className="inline-flex rounded-full bg-surface-muted border border-border-soft px-3 py-1.5 text-xs font-bold text-text-mid whitespace-nowrap">
+                                  <span key={chip} className="inline-flex rounded-full bg-white border border-border-soft px-3 py-1.5 text-xs font-bold text-text-mid whitespace-nowrap shadow-sm">
                                     {chip}
                                   </span>
                                 ))}
