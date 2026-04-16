@@ -1,6 +1,3 @@
-import * as THREE from 'three'
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
 import { Shared3DEnvironment, Sparkles, Float, useResponsiveScale } from './Shared3DEnvironment'
 
 /* ── paint brush ── */

@@ -26,8 +26,6 @@ export function ChapterLayout({
   tracker,
   children
 }: ChapterLayoutProps) {
-  const ease = [0.22, 1, 0.36, 1]
-
   return (
     <div className="activity-centre">
       <Suspense fallback={null}>
@@ -36,7 +34,7 @@ export function ChapterLayout({
 
       <section className="activity-hero">
         <div className="activity-hero-content">
-          <motion.div className="activity-hero-text" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease }}>
+          <motion.div className="activity-hero-text" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
             <div className="activity-hero-badge">
               <span className="h-2.5 w-2.5 rounded-full bg-secondary animate-pulse shadow-lg shadow-secondary/40" />
               <span className="text-xs font-black uppercase tracking-[0.28em] text-text-mid">{moduleChapter}</span>

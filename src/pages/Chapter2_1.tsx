@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { lazy, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useXP } from '../context/XPContext'
