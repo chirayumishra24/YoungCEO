@@ -1,7 +1,7 @@
-import { Suspense, lazy, useContext, useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { XPContext } from '../components/Layout'
+import { useXP } from '../context/XPContext'
 
 import CircuitDivider from '../components/CircuitDivider'
 
@@ -37,7 +37,7 @@ const studioSteps = [
 ]
 
 export default function Home() {
-  const { addXP } = useContext(XPContext)
+  const { addXP } = useXP()
   const r = useReducedMotion()
 
   useEffect(() => {
@@ -52,20 +52,20 @@ export default function Home() {
         </div>
       </Suspense>
 
-      {/* Hero Section - Asymmetrical Alignment */}
-      <section className="activity-hero">
+      {/* Hero Section */}
+      <section className="activity-hero" style={{ paddingTop: '4rem', paddingBottom: '3rem' }}>
         <div className="activity-hero-content">
           <motion.div className="flex-1 text-left" initial={r ? undefined : { opacity: 0, x: -30 }} animate={r ? undefined : { opacity: 1, x: 0 }} transition={r ? undefined : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
             <div className="activity-hero-badge inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/60 rounded-full border border-white backdrop-blur-md shadow-sm">
               <span className="h-2.5 w-2.5 rounded-full bg-primary animate-pulse shadow-lg shadow-primary/40" />
               <span className="text-[0.65rem] font-black uppercase tracking-[0.28em] text-text-mid">Grades 3-4 Studio</span>
             </div>
-            <h1 className="activity-hero-title mb-6 leading-[1.1]">
+            <h1 className="activity-hero-title mb-8 leading-[1.08]">
               Young CEO<br />
               <span className="rainbow-text block mt-2">Challenge</span>
             </h1>
             
-            <p className="activity-hero-desc text-text-mid max-w-xl text-lg mb-8 text-left mx-0">
+            <p className="activity-hero-desc text-text-mid max-w-xl text-lg mb-10 text-left mx-0">
               A cleaner, more structured startup course where students invent a smart wearable, design the brand, and pitch it like young founders.
             </p>
             
@@ -93,7 +93,7 @@ export default function Home() {
       </section>
 
       {/* Main Content */}
-      <div className="activity-content mt-10">
+      <div className="activity-content mt-16">
         <div className="activity-grid">
           <div className="activity-main w-full">
             
@@ -106,12 +106,12 @@ export default function Home() {
                 <h2 className="mt-3 font-[Fredoka] text-3xl font-bold text-text-dark md:text-4xl">A structure that feels playful</h2>
                 <p className="mt-3 text-base font-medium text-text-mid max-w-2xl mx-auto">Each chapter now follows the same rhythm: clear hero, objective card, stacked content cards, and a simple end CTA.</p>
               </div>
-              <div className="mt-12 grid gap-6 sm:grid-cols-3 w-full">
+              <div className="mt-14 grid gap-8 sm:grid-cols-3 w-full">
                 {studioSteps.map((step, i) => (
                   <motion.div key={step.title}
                     initial={r ? undefined : { opacity: 0, y: 16 }} whileInView={r ? undefined : { opacity: 1, y: 0 }}
                     viewport={{ once: true }} transition={r ? undefined : { duration: 0.4, delay: i * 0.1 }}
-                    className={`flex flex-col items-center p-8 transition-transform hover:-translate-y-2 activity-card ${step.theme}`} style={{ width: '100%' }}>
+                    className={`flex flex-col items-center p-8 transition-all hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(108,92,231,0.12)] activity-card ${step.theme}`} style={{ width: '100%' }}>
                     <div className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-white text-3xl shadow-sm border border-white/80">{step.emoji}</div>
                     <div className="mt-6 font-[Fredoka] text-2xl font-bold text-text-dark">{step.title}</div>
                     <div className="mt-3 text-sm font-medium text-text-mid leading-relaxed">{step.desc}</div>
@@ -159,9 +159,9 @@ export default function Home() {
                 <p className="mt-3 text-base font-medium text-text-mid max-w-2xl mx-auto">Two main modules mapped out into individual, interactive chapters.</p>
               </div>
 
-              <div className="mt-12 flex flex-col gap-12 w-full">
+              <div className="mt-14 flex flex-col gap-14 w-full">
                 {modules.map((module) => (
-                  <div key={module.id} className={`activity-card ${module.clayTheme} p-8 sm:p-12 w-full transition-shadow hover:shadow-[16px_16px_40px_rgba(108,92,231,0.08),-16px_-16px_40px_rgba(255,255,255,1)]`}>
+                  <div key={module.id} className={`activity-card ${module.clayTheme} p-8 sm:p-12 w-full transition-all hover:shadow-[16px_16px_40px_rgba(108,92,231,0.1),-16px_-16px_40px_rgba(255,255,255,1)]`}>
                     <div className="flex flex-col gap-2 text-center mb-10 w-full">
                       <div className="mx-auto w-fit px-4 py-1.5 rounded-full bg-white/80 border border-white shadow-sm text-[0.68rem] font-black uppercase tracking-[0.26em] text-text-mid">Module {module.id}</div>
                       <h3 className="font-[Fredoka] text-4xl font-bold text-text-dark mt-2">{module.title}</h3>
@@ -171,11 +171,11 @@ export default function Home() {
                     <div className="flex flex-col gap-5 w-full">
                       {module.chapters.map((chapter) => (
                         <Link key={chapter.path} to={chapter.path} className="block no-underline transform transition-transform hover:-translate-y-1">
-                          <div className="rounded-[28px] border border-white/80 bg-white/70 p-6 sm:p-8 shadow-[8px_8px_20px_rgba(0,0,0,0.03),-4px_-4px_12px_rgba(255,255,255,0.8)] hover:bg-white/90">
+                          <div className="rounded-[28px] border border-white/80 border-l-4 border-l-primary bg-white/70 p-6 sm:p-8 shadow-[8px_8px_20px_rgba(0,0,0,0.03),-4px_-4px_12px_rgba(255,255,255,0.8)] hover:bg-white/90 hover:shadow-[0_8px_30px_rgba(108,92,231,0.12)] transition-all">
                             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-left">
                               <div className="flex-1">
                                 <div className="flex items-center gap-3">
-                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-muted text-sm font-black text-text-mid shadow-inner border border-white/50">{chapter.num}</div>
+                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-sm font-black text-white shadow-lg shadow-primary/25 border border-white/20">{chapter.num}</div>
                                   <h4 className="font-[Fredoka] text-2xl font-bold text-text-dark">{chapter.title}</h4>
                                 </div>
                                 <p className="mt-3 text-sm font-medium leading-relaxed text-text-mid md:ml-13 sm:w-11/12">{chapter.desc}</p>

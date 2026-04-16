@@ -1,20 +1,33 @@
-import { createContext, useEffect, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
-import { useXP } from './XPCounter'
+import { useEffect, useState, useCallback } from 'react'
+import { Outlet, useLocation, Link } from 'react-router-dom'
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 
-
-export const XPContext = createContext<ReturnType<typeof useXP>>({ xp: 0, addXP: () => false, percentage: 0 })
-
-// Removed chapter tabs array for simpler navigation
-
-const levelInfo = (xp: number) => {
-  if (xp >= 400) return { title: 'Super CEO', emoji: '🏆', color: 'from-amber-400 to-orange-500' }
-  if (xp >= 250) return { title: 'CEO', emoji: '👔', color: 'from-primary to-primary-dark' }
-  if (xp >= 100) return { title: 'Junior CEO', emoji: '📈', color: 'from-secondary to-accent-blue' }
-  return { title: 'Intern', emoji: '🌱', color: 'from-accent-green to-secondary' }
+/* ─── XP hook (canonical source: XPCounter.tsx) ─── */
+function useXPLocal() {
+  const MAX_XP = 500
+  const [xp, setXp] = useState(() => parseInt(localStorage.getItem('smart_wearable_xp') || '0'))
+  const addXP = useCallback((amount: number, key: string) => {
+    if (localStorage.getItem('xp_' + key)) return false
+    localStorage.setItem('xp_' + key, 'true')
+    setXp(prev => { const next = prev + amount; localStorage.setItem('smart_wearable_xp', String(next)); return next })
+    return true
+  }, [])
+  return { xp, addXP, percentage: Math.min((xp / MAX_XP) * 100, 100) }
 }
 
+import { createContext } from 'react'
+export const XPContext = createContext<ReturnType<typeof useXPLocal>>({ xp: 0, addXP: () => false, percentage: 0 })
+
+
+/* ─── Level logic ─── */
+const levelInfo = (xp: number) => {
+  if (xp >= 400) return { title: 'Super CEO', emoji: '🏆', gradient: 'from-amber-400 to-orange-500' }
+  if (xp >= 250) return { title: 'CEO', emoji: '👔', gradient: 'from-primary to-primary-dark' }
+  if (xp >= 100) return { title: 'Junior CEO', emoji: '📈', gradient: 'from-secondary to-accent-blue' }
+  return { title: 'Intern', emoji: '🌱', gradient: 'from-accent-green to-secondary' }
+}
+
+/* ─── XP Popup ─── */
 function XPPopup({ xp }: { xp: number }) {
   const [popup, setPopup] = useState<{ amount: number; id: number } | null>(null)
   const [prevXp, setPrevXp] = useState(xp)
@@ -27,67 +40,83 @@ function XPPopup({ xp }: { xp: number }) {
   return (
     <motion.div key={popup.id}
       initial={r ? undefined : { opacity: 0, y: 12 }} animate={r ? undefined : { opacity: 1, y: 0 }} exit={r ? undefined : { opacity: 0, y: -8 }}
-      className="fixed left-1/2 top-24 z-[60] -translate-x-1/2 rounded-full border border-primary/15 bg-white/95 px-6 py-3 font-[Fredoka] text-base font-bold text-primary shadow-xl shadow-primary/10 backdrop-blur-xl">
+      className="fixed left-1/2 top-20 z-[60] -translate-x-1/2 rounded-full border border-primary/15 bg-white/95 px-6 py-3 font-[Fredoka] text-base font-bold text-primary shadow-xl shadow-primary/10 backdrop-blur-xl">
       +{popup.amount} XP ⭐
     </motion.div>
   )
 }
 
+/* ─── Scroll-to-top FAB ─── */
+function ScrollToTop() {
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    const handler = () => setShow(window.scrollY > 400)
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-white text-lg shadow-lg shadow-primary/30 hover:scale-110 transition-transform cursor-pointer border-2 border-white/30"
+          aria-label="Scroll to top"
+        >
+          ↑
+        </motion.button>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function Layout() {
-  const xpData = useXP()
+  const xpData = useXPLocal()
   const location = useLocation()
   const level = levelInfo(xpData.xp)
 
   return (
     <XPContext.Provider value={xpData}>
       <div className="relative z-10 flex min-h-screen w-full flex-col">
-        {/* Floating Pill Navbar */}
-        <div className="sticky top-4 z-50 px-4 sm:px-6 flex justify-center w-full">
-          <nav className="w-full max-w-[80rem] rounded-[2rem] border border-white/60 bg-white/70 backdrop-blur-3xl shadow-[0_8px_32px_rgba(108,92,231,0.08),inset_0_2px_4px_rgba(255,255,255,0.9)] transition-all">
-            <div className="flex flex-col gap-4 py-3 px-5 md:flex-row md:items-center md:justify-between">
-              
-              {/* Logo Area */}
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-gradient-to-br from-[#6C5CE7] to-[#A29BFE] text-2xl text-white shadow-lg shadow-[#6C5CE7]/30 hover:scale-105 transition-transform cursor-pointer">⌚</div>
-                <div className="flex flex-col justify-center">
-                  <div className="font-[Fredoka] text-xl font-bold text-text-dark tracking-tight leading-tight">Young CEO Challenge</div>
-                  <div className="text-[0.66rem] font-black uppercase tracking-[0.3em] text-[#6C5CE7]/70 mt-0.5">Wearable Studio</div>
+        {/* ─── Floating Navbar ─── */}
+        <div className="sticky top-4 z-50 px-5 sm:px-8 flex justify-center w-full">
+          <nav className="w-full max-w-6xl rounded-2xl border border-white/50 bg-white/65 backdrop-blur-2xl shadow-[0_6px_32px_rgba(108,92,231,0.07),0_1px_4px_rgba(0,0,0,0.03)]">
+            <div className="flex items-center justify-between py-4 px-6 sm:px-8">
+
+              {/* Logo */}
+              <Link to="/" className="flex items-center gap-3.5 no-underline shrink-0">
+                <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br from-primary to-primary-dark text-xl text-white shadow-lg shadow-primary/25">⌚</div>
+                <div>
+                  <div className="font-[Fredoka] text-base font-bold text-text-dark leading-tight">Young CEO Challenge</div>
+                  <div className="text-[0.6rem] font-black uppercase tracking-[0.24em] text-primary/55 mt-0.5">Wearable Studio</div>
                 </div>
-              </div>
+              </Link>
 
               {/* XP Area */}
-              <div className="flex items-center justify-center gap-3 bg-white/50 p-1.5 rounded-full border border-white/50 shadow-[inset_0_2px_4px_rgba(255,255,255,1)]">
-                <div className={`flex h-10 items-center justify-center gap-2 rounded-full bg-gradient-to-br ${level.color} px-5 text-sm font-bold text-white shadow-md`}>
-                  <span className="text-lg">{level.emoji}</span>
+              <div className="flex items-center gap-3">
+                <div className={`hidden sm:flex h-9 items-center gap-2.5 rounded-full bg-gradient-to-br ${level.gradient} px-5 text-[0.72rem] font-bold text-white shadow-md`}>
+                  <span className="text-base">{level.emoji}</span>
                   <span className="font-[Fredoka] tracking-wide">{level.title}</span>
                 </div>
-                
-                <div className="flex items-center gap-3 px-3 pr-5">
-                  <div className="hidden sm:block relative h-2.5 w-24 overflow-hidden rounded-full bg-surface-muted border border-black/5 shadow-inner">
-                    <motion.div 
-                      className="h-full rounded-full bg-gradient-to-r from-[#6C5CE7] via-[#A29BFE] to-[#00CEC9] shadow-[0_0_8px_rgba(108,92,231,0.5)]" 
-                      initial={{ width: 0 }} 
-                      animate={{ width: `${xpData.percentage}%` }} 
-                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} 
-                    />
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xl drop-shadow-sm">⭐</span>
-                    <span className="font-[Fredoka] text-xl sm:text-2xl font-black text-text-dark tracking-tight">{xpData.xp}</span>
-                    <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-text-light/80">XP</span>
-                  </div>
+                <div className="flex items-center gap-2.5 bg-white/50 rounded-full px-5 py-2.5 border border-border-soft/30 shadow-sm">
+                  <span className="text-lg">⭐</span>
+                  <span className="font-[Fredoka] text-lg font-black text-text-dark">{xpData.xp}</span>
+                  <span className="text-[0.62rem] font-black uppercase tracking-wider text-text-light">XP</span>
                 </div>
               </div>
-              
             </div>
-            {/* Edge Progress Bar */}
-            <div className="h-[2px] bg-transparent overflow-hidden rounded-b-[2rem]">
-              <motion.div className="h-full bg-gradient-to-r from-[#6C5CE7] via-[#A29BFE] to-[#00CEC9] opacity-80" initial={{ width: 0 }} animate={{ width: `${xpData.percentage}%` }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} />
+
+            {/* Thin progress edge */}
+            <div className="h-[2px] bg-transparent overflow-hidden rounded-b-2xl">
+              <motion.div className="h-full bg-gradient-to-r from-primary via-secondary to-accent-green opacity-70" initial={{ width: 0 }} animate={{ width: `${xpData.percentage}%` }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} />
             </div>
           </nav>
         </div>
 
         <XPPopup xp={xpData.xp} />
+        <ScrollToTop />
 
         <main className="relative z-10 w-full flex-1" key={location.pathname}><Outlet /></main>
 

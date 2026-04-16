@@ -16,6 +16,11 @@ const pitchSteps = [
 ]
 
 export default function Chapter2_1() {
+  const { addXP } = useXP()
+  const r = useReducedMotion()
+
+  useEffect(() => { addXP(10, 'ch2_1_visit') }, [addXP])
+
   return (
     <ChapterLayout
       scene={<Scene_Stage />}

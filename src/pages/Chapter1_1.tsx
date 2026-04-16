@@ -1,10 +1,10 @@
-import { Suspense, lazy, useContext, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import { useXP } from '../context/XPContext'
 import { DEVICES, IDEA_EXAMPLES } from '../constants'
 import { ChapterLayout } from '../components/ChapterLayout'
-import { PhaseTracker, ProgressRing } from '../components/UIComponents'
+import PhaseTracker from '../components/PhaseTracker'
 import CircuitDivider from '../components/CircuitDivider'
 
 const Scene_InventorLab = lazy(() => import('../components/Scene_InventorLab'))
@@ -92,7 +92,7 @@ function ConfettiBurst() {
 }
 
 export default function Chapter1_1() {
-  const { addXP } = useContext(XPContext)
+  const { addXP } = useXP()
   const shouldReduceMotion = useReducedMotion()
   const cardHover = shouldReduceMotion ? undefined : { y: -6, scale: 1.02 }
 
